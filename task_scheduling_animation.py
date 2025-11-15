@@ -41,42 +41,7 @@ def draw_state(state):
     ax.clear()
     ax.set_xlim(0, makespan + 2)
    # ax.set_ylim(-1, num_machines)
-    ax.set_ylim(-num_machines, 1)
-    ax.set_title("Task Scheduling Visualization (List Scheduling)", fontsize=12)
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Machine ID")
-
-    for m_id, mach in enumerate(state):
-        for i, (start, dur) in enumerate(mach):
-            ax.add_patch(patches.Rectangle((start, -m_id - 0.4), dur, 0.8,
-                                           color=colors[i % len(colors)], ec='black'))
-            ax.text(start + dur / 2, -m_id, f"T{i+1}", ha='center', va='center', fontsize=8)
-        ax.text(-1.5, -m_id, f"M{m_id+1}", va='center', fontsize=9)
-
-def update(frame):
-    draw_state(states[frame])
-
-ani = FuncAnimation(fig, update, frames=len(states), interval=1000, repeat=False)
-display(HTML(ani.to_jshtml()))
-
-#@====@csquickrevisionshorts 
-
-#--- Save the animation ---
-from matplotlib.animation import PillowWriter
-
-# Save as MP4
-ani.save("task_scheduling_animation.mp4", writer='ffmpeg', fps=1)
-
-# Save as GIF (alternative)
-ani.save("task_scheduling_animation.gif", writer=PillowWriter(fps=1))
-
-print("✅ Animation saved as MP4 and GIF")fig, ax = plt.subplots(figsize=(8, 4))
-colors = ['skyblue', 'lightgreen', 'lightcoral', 'khaki', 'plum', 'orange']
-
-def draw_state(state):
-    ax.clear()
-    ax.set_xlim(0, makespan + 2)
-    ax.set_ylim(-1, num_machines)
+ 	ax.set_ylim(-num_machines, 1)
     ax.set_title("Task Scheduling Visualization (List Scheduling)", fontsize=12)
     ax.set_xlabel("Time")
     ax.set_ylabel("Machine ID")
