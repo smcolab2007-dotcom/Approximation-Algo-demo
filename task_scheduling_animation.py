@@ -33,8 +33,61 @@ print(f"Makespan (total time): {makespan}")
 print(f"Average load per machine: {avg_load:.2f}")
 print(f"Scheduling efficiency: {efficiency:.2f}%")
 
+# --- Visualization-friendly scheduling: store task IDs ---
+machines = [[] for _ in range(num_machines)]
+end_times = [0] * num_machines
+states = []
+
+for task_id, t in enumerate(tasks, start=1):
+    m = end_times.index(min(end_times))       # machine with earliest free time
+    machines[m].append((end_times[m], t, task_id))  # store (start, duration, task_id)
+    end_times[m] += t
+#@csquickrevisionshorts
+    # snapshot for animation
+    state = [[(s, d, tid) for (s, d, tid) in mach] for mach in machines]
+    states.append(state)
+
+
 # --- Visualization setup ---
 fig, ax = plt.subplots(figsize=(8, 4))
+colors = ['skyblue', 'lightgreen', 'lightcoral', 'khaki', 'plum', 'orange']
+
+def draw_state(state):
+    ax.clear()
+    ax.set_xlim(0, makespan + 2)
+
+    ax.set_ylim(-num_machines, 1)
+    ax.set_title("Task Scheduling Visualization (List Scheduling)", fontsize=12)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Machine ID")
+
+    for m_id, mach in enumerate(state):
+        for idx, (start, dur, tid) in enumerate(mach):
+            ax.add_patch(patches.Rectangle(
+                (start, -m_id - 0.4), dur, 0.8,
+                color=colors[idx % len(colors)], ec='black'
+            ))
+            ax.text(start + dur/2, -m_id, f"T{tid}",
+                    ha='center', va='center', fontsize=8)
+
+        ax.text(-1.5, -m_id, f"M{m_id+1}", va='center', fontsize=9)
+
+
+def update(frame):
+    draw_state(states[frame])
+
+
+ani = FuncAnimation(fig, update, frames=len(states), interval=1000, repeat=False)
+display(HTML(ani.to_jshtml()))
+
+
+# --- Save animation ---
+from matplotlib.animation import PillowWriter
+
+ani.save("task_scheduling_animation.mp4", writer='ffmpeg', fps=1)
+ani.save("task_scheduling_animation.gif", writer=PillowWriter(fps=1))
+
+print("✅ Corrected animation saved as MP4 and GIF")fig, ax = plt.subplots(figsize=(8, 4))
 colors = ['skyblue', 'lightgreen', 'lightcoral', 'khaki', 'plum', 'orange']
 
 def draw_state(state):
